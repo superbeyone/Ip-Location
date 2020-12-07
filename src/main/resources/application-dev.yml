@@ -1,0 +1,50 @@
+server:
+  port: 9193
+  servlet:
+    session:
+      tracking-modes: cookie
+    context-path: /
+#spring
+spring:
+  devtools:
+    restart:
+      enabled: false
+  redis:
+    database: 3
+    host: 192.9.104.243
+    port: 6379
+    password: 123456
+    timeout: 1000
+    jedis:
+      pool:
+        max-active: 200
+        max-idle: 10
+        max-wait: -1
+        min-idle: 0
+
+
+logging:
+  level:
+    root:
+      debug
+
+#mybatis:
+#  mapper-locations: classpath:mapper/*Mapper.xml
+#  type-aliases-package: com.tdt.ip.entity
+#  configuration:
+#    map-underscore-to-camel-case: true
+
+###################################### 自定义配置  #################################################
+tdt:
+  file-properties:
+    region-csv: E:\data\ip\data\global_region.csv   # csv  文件位置 生成 ip2region.db文件使用
+    ip-txt: E:\data\ip\data\ip.merge.txt      # txt 文件位置 同上
+    region-db: E:\data\ip\data\ip2region.db   # db 文件位置 ip查询时使用
+    admin-data-csv: E:\data\ip\data\AdminData.csv # admin data csv
+  search-properties:
+    type: B-tree      # 数据查询方式 B-tree   Binary   Memory   默认 B-tree
+  redis-properties:
+    expire-time: 3600 # redis过期时间 单位 秒
+  administrative-properties: 
+    url: http://192.9.104.247:9000
+    
