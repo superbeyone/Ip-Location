@@ -46,7 +46,7 @@ public class IpVo implements Serializable {
 
     private String lng;
 
-    private int level;
+    private Integer level;
 
     /**
      * 洲

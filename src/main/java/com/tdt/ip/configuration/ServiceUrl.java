@@ -10,9 +10,9 @@ import lombok.Data;
  * @date 2020-12-07 10:53
  **/
 @Data
-public class AdministrativeProperties {
+public class ServiceUrl {
 
-    private String url;
+    private String administrativeService;
 
 
 }

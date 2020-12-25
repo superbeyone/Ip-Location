@@ -22,5 +22,5 @@ public class TdtIpConfig {
 
     private RedisProperties redisProperties;
 
-    private AdministrativeProperties administrativeProperties;
+    private ServiceUrl serviceUrl;
 }

@@ -6,6 +6,21 @@ server:
     context-path: /
 #spring
 spring:
+  application:
+    name: cloud-ip-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.9.104.20:8848
+      config:
+        server-addr: 192.9.104.20:8848  #配置中心地址
+        file-extension: yaml  #yaml格式配置文件
+    sentinel:
+      transport:
+        # sentinel dashboard 地址
+        dashboard: 192.9.104.20:8018
+        # 默认为8719，如果被占用会自动+1，直到找到为止
+        port: 8719
   devtools:
     restart:
       enabled: false
@@ -28,12 +43,12 @@ logging:
     root:
       debug
 
-#mybatis:
-#  mapper-locations: classpath:mapper/*Mapper.xml
-#  type-aliases-package: com.tdt.ip.entity
-#  configuration:
-#    map-underscore-to-camel-case: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 ###################################### 自定义配置  #################################################
 tdt:
   file-properties:
@@ -45,6 +60,6 @@ tdt:
     type: B-tree      # 数据查询方式 B-tree   Binary   Memory   默认 B-tree
   redis-properties:
     expire-time: 3600 # redis过期时间 单位 秒
-  administrative-properties: 
-    url: http://192.9.104.247:9000
+  service-url:
+    administrative-service: http://cloud-api-administrative-service/api
     

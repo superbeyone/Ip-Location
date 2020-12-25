@@ -1,11 +1,11 @@
 package com.tdt.ip.controller;
 
-import com.tdt.ip.commons.DataInitBean;
 import com.tdt.ip.commons.JsonResult;
-import com.tdt.ip.commons.ResultEnum;
 import com.tdt.ip.configuration.TdtIpConfig;
 import com.tdt.ip.entity.IpVo;
 import com.tdt.ip.service.IpService;
+import com.tdt.ip.utils.IpUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 
 /**
@@ -31,27 +32,52 @@ public class IpSearchController {
     TdtIpConfig tdtIpConfig;
 
     @Autowired
-    DataInitBean dataInitBean;
-
-    @Autowired
     IpService ipService;
+
+    File regionDbFile = null;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    private final String localIpPrefix = "192.9.104.";
+
     @GetMapping("/{ip}")
-    public JsonResult<IpVo> getIpPosition(@PathVariable(name = "ip") String ip) throws Exception {
+    public JsonResult<IpVo> getIpPositionByIp(@PathVariable(name = "ip") String ip) throws Exception {
 
-
-        String regionDb = tdtIpConfig.getFileProperties().getRegionDb();
-        File regionDbFile = new File(regionDb);
-        if (!regionDbFile.exists()) {
-            logger.error("没有找到文件,{}", regionDb);
-            return JsonResult.fail(ResultEnum.NO_FILE_FOUND);
+        if (regionDbFile == null) {
+            File regionDbFile = initRegionDbFile();
+            this.regionDbFile = regionDbFile;
         }
         IpVo ipVo = ipService.getIpPosition(ip, regionDbFile);
 
         return JsonResult.getInstance().success(ipVo);
     }
 
+    private File initRegionDbFile() {
+        String regionDb = tdtIpConfig.getFileProperties().getRegionDb();
+        File regionDbFile = new File(regionDb);
+        if (!regionDbFile.exists()) {
+            logger.error("没有找到文件,{}", regionDb);
+            throw new RuntimeException("没有找到数据库文件");
+        }
+        return regionDbFile;
+    }
+
+    @GetMapping
+    public JsonResult<IpVo> getIpPosition(HttpServletRequest request) throws Exception {
+
+
+        if (regionDbFile == null) {
+            File regionDbFile = initRegionDbFile();
+            this.regionDbFile = regionDbFile;
+        }
+        String ip = IpUtil.getIp(request);
+        logger.debug("获取ip地址：{}", ip);
+        if (StringUtils.startsWith(ip, localIpPrefix)) {
+            ip = "218.244.250.66";
+        }
+        IpVo ipVo = ipService.getIpPosition(ip, regionDbFile);
+
+        return JsonResult.getInstance().success(ipVo);
+    }
 
 }

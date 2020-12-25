@@ -2,6 +2,7 @@ package com.tdt.ip.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Pattern;
 
 /**
@@ -29,7 +30,15 @@ public class IpUtil {
     }
 
     public static String convertKey(String ip) {
-        return "ip:" + StringUtils.replace(ip, ".", ":");
+        return "ip:" + ip;
+    }
+
+    public static String getIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Real-IP");
+        if (StringUtils.isBlank(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.tdt.ip.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.HashMultimap;
 import com.tdt.ip.commons.DataInitBean;
 import com.tdt.ip.configuration.TdtIpConfig;
@@ -41,6 +42,7 @@ public class IpServiceImpl implements IpService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+
     /**
      * 查询Ip数据
      *
@@ -55,8 +57,8 @@ public class IpServiceImpl implements IpService {
             return null;
         }
         Object result = get(IpUtil.convertKey(ip));
-        if (result != null && result instanceof IpVo) {
-            return (IpVo) result;
+        if (result != null && result instanceof String) {
+            return JSON.parseObject((String) result, IpVo.class);
         }
         DbSearcher searcher = dataInitBean.getDbSearcher();
 
@@ -65,10 +67,19 @@ public class IpServiceImpl implements IpService {
         Object invoke = method.invoke(searcher, ip);
         if (invoke instanceof IpVo) {
             IpVo ipVo = convertIp((IpVo) invoke);
-            set(IpUtil.convertKey(ip), ipVo);
+
+            ipVo = setIpLevel(ipVo);
+            set(IpUtil.convertKey(ip), JSON.toJSONString(ipVo));
             return ipVo;
         }
         return null;
+    }
+
+    private IpVo setIpLevel(IpVo ipVo) {
+        String gb = ipVo.getGb();
+        Integer level = dataInitBean.getGlobalGbAndLevelMap().get(gb);
+        ipVo.setLevel(level);
+        return ipVo;
     }
 
 

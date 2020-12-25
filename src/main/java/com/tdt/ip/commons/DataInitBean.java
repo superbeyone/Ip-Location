@@ -1,18 +1,22 @@
 package com.tdt.ip.commons;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.HashMultimap;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
-import com.tdt.ip.configuration.AdministrativeProperties;
 import com.tdt.ip.configuration.TdtIpConfig;
 import com.tdt.ip.entity.AdminData;
 import com.tdt.ip.utils.DbConfig;
 import com.tdt.ip.utils.DbSearcher;
 import com.tdt.ip.utils.coding.EncodingDetect;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,10 +35,13 @@ import java.util.Map;
  * @date 2020-01-02 15:47
  **/
 @Component
-public class DataInitBean implements InitializingBean {
+public class DataInitBean implements ApplicationRunner {
 
     @Autowired
     TdtIpConfig tdtIpConfig;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     private DbSearcher dbSearcher;
 
@@ -60,10 +67,14 @@ public class DataInitBean implements InitializingBean {
         return shortNameAdminDataMap;
     }
 
-    public Map<String, Integer> globalGbAndLevelMap = new HashMap<>(5096);
+    private Map<String, Integer> globalGbAndLevelMap = new HashMap<>(4096);
+
+    public Map<String, Integer> getGlobalGbAndLevelMap() {
+        return globalGbAndLevelMap;
+    }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void run(ApplicationArguments args) throws Exception {
 
         initCityLevel();
 
@@ -79,8 +90,39 @@ public class DataInitBean implements InitializingBean {
      * 初始化行政区划信息
      */
     private void initCityLevel() {
-        AdministrativeProperties administrativeProperties = tdtIpConfig.getAdministrativeProperties();
-        String url = administrativeProperties.getUrl();
+
+        try {
+            String administrativeService = tdtIpConfig.getServiceUrl().getAdministrativeService();
+            String response = restTemplate.getForObject(administrativeService + "/region/county", String.class);
+            if (StringUtils.isNotBlank(response)) {
+                JSONObject jsonObject = JSON.parseObject(response);
+                JSONObject countryObj = jsonObject.getJSONObject("data");
+                globalGbAndLevelMap.put("000000", 4);
+                convertJsonObj(countryObj);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void convertJsonObj(JSONObject countryObj) {
+        JSONArray childList = countryObj.getJSONArray("child");
+        if (childList != null && childList.size() > 0) {
+            for (Object child : childList) {
+                if (child == null) {
+                    continue;
+                }
+                JSONObject jsonObject = JSON.parseObject(String.valueOf(child));
+                if (jsonObject == null) {
+                    continue;
+                }
+                String gbCode = jsonObject.getString("gbCode");
+                int level = jsonObject.getIntValue("level");
+                String key = StringUtils.substringAfter(gbCode, "156");
+                globalGbAndLevelMap.put(key, level);
+                convertJsonObj(jsonObject);
+            }
+        }
     }
 
     private void initDataSearcher() throws Exception {

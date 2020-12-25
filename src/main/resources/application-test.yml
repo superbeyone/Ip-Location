@@ -48,13 +48,14 @@ management:
     web:
       exposure:
         include: "*"
+
 ###################################### 自定义配置  #################################################
 tdt:
   file-properties:
-    region-csv: /opt/ip/data/global_region.csv   # csv  文件位置 生成 ip2region.db文件使用  下载地址 https://github.com/lionsoul2014/ip2region/tree/master/data
-    ip-txt: /opt/ip/data/ip.merge.txt      # txt 文件位置 同上  下载地址 https://github.com/lionsoul2014/ip2region/tree/master/data
-    region-db: /opt/ip/data/ip2region.db   # db 文件位置 ip查询时使用  下载地址 https://github.com/lionsoul2014/ip2region/tree/master/data
-    admin-data-csv: /opt/ip/data/AdminData.csv # admin data csv   
+    region-csv: /opt/ip-service/data/global_region.csv   # csv  文件位置 生成 ip2region.db文件使用 下载地址 https://github.com/lionsoul2014/ip2region/tree/master/data
+    ip-txt: /opt/ip-service/data/ip.merge.txt      # txt 文件位置 同上  下载地址 https://github.com/lionsoul2014/ip2region/tree/master/data
+    region-db: /opt/ip-service/data/ip2region.db   # db 文件位置 ip查询时使用 下载地址 https://github.com/lionsoul2014/ip2region/tree/master/data
+    admin-data-csv: /opt/ip-service/data/AdminData.csv # admin data csv
   search-properties:
     type: B-tree      # 数据查询方式 B-tree   Binary   Memory   默认 B-tree
   redis-properties:
