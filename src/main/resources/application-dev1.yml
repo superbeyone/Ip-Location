@@ -1,0 +1,35 @@
+spring:
+  devtools:
+    restart:
+      enabled: false
+  redis:
+    database: 3
+    host: 192.9.104.243
+    port: 6379
+    password: 123456
+    timeout: 1000
+    jedis:
+      pool:
+        max-active: 200
+        max-idle: 10
+        max-wait: -1
+        min-idle: 0
+
+
+
+
+
+########## 自定义配置  ###########
+tdt:
+  file-properties:
+    region-csv: E:\data\ip\data\global_region.csv   # csv  文件位置 生成 ip2region.db文件使用
+    ip-txt: E:\data\ip\data\ip.merge.txt      # txt 文件位置 同上
+    region-db: E:\data\ip\data\ip2region.db   # db 文件位置 ip查询时使用
+    admin-data-csv: E:\data\ip\data\AdminData.csv # admin data csv
+  search-properties:
+    type: B-tree      # 数据查询方式 B-tree   Binary   Memory   默认 B-tree
+  redis-properties:
+    expire-time: 3600 # redis过期时间 单位 秒
+  service-url:
+    administrative-service: http://cloud-api-administrative-service/api
+    
