@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Mr.superbeyone
@@ -80,4 +82,29 @@ public class IpSearchController {
         return JsonResult.getInstance().success(ipVo);
     }
 
+
+    /**
+     * 兼容老版本
+     *
+     * @param request req
+     * @return map
+     */
+    @GetMapping("/getCityName")
+    public Map<String, Object> getCityName(HttpServletRequest request) throws Exception {
+        String ip = IpUtil.getIp(request);
+        logger.debug("获取ip地址：{}", ip);
+        if (StringUtils.startsWith(ip, localIpPrefix)) {
+            ip = "218.244.250.66";
+        }
+        IpVo ipVo = ipService.getIpPosition(ip, regionDbFile);
+        Map<String, Object> map = new HashMap<>(8);
+        if (ipVo != null) {
+            map.put("cityName", ipVo.getCity());
+            map.put("gbCode", ipVo.getGb());
+            map.put("lon", ipVo.getLng());
+            map.put("lat", ipVo.getLat());
+            map.put("level", ipVo.getLevel());
+        }
+        return map;
+    }
 }

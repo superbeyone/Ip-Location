@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: cloud-ip-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.tdt.com:80
+        namespace: 7bee59d8-81bd-4828-89b3-4159e981cf86
+      config:
+        server-addr: nacos.tdt.com:80  #配置中心地址
+        file-extension: yaml  #yaml格式配置文件
+        group: PROD_GROUP
+        namespace: 7bee59d8-81bd-4828-89b3-4159e981cf86
+
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    root:
+      debug

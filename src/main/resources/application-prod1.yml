@@ -1,26 +1,4 @@
-server:
-  port: 9193
-  servlet:
-    session:
-      tracking-modes: cookie
-    context-path: /
-#spring
 spring:
-  application:
-    name: cloud-ip-service
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 192.9.104.20:8848
-      config:
-        server-addr: 192.9.104.20:8848  #配置中心地址
-        file-extension: yaml  #yaml格式配置文件
-    sentinel:
-      transport:
-        # sentinel dashboard 地址
-        dashboard: 192.9.104.20:8018
-        # 默认为8719，如果被占用会自动+1，直到找到为止
-        port: 8719
   devtools:
     restart:
       enabled: false
@@ -37,17 +15,12 @@ spring:
         max-wait: -1
         min-idle: 0
 
-
 logging:
   level:
     root:
       debug
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
+
 ###################################### 自定义配置  #################################################
 tdt:
   file-properties:
