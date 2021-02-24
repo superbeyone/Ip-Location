@@ -35,10 +35,16 @@ public class IpUtil {
 
     public static String getIp(HttpServletRequest request) {
         String ip = request.getHeader("X-Real-IP");
-        if (StringUtils.isBlank(ip)) {
+        //X-Original-Forwarded-For
+        if (StringUtils.isNotBlank(ip)) {
+            if (StringUtils.startsWith(ip, "100.125.")) {
+                String originalStr = request.getHeader("X-Original-Forwarded-For");
+                ip = StringUtils.substringBefore(originalStr, ",");
+            }
+        } else {
             ip = request.getRemoteAddr();
         }
-        return ip;
+        return ip.trim();
     }
 
 }

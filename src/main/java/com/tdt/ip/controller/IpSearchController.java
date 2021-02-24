@@ -1,5 +1,6 @@
 package com.tdt.ip.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.tdt.ip.commons.JsonResult;
 import com.tdt.ip.configuration.TdtIpConfig;
 import com.tdt.ip.entity.IpVo;
@@ -90,12 +91,13 @@ public class IpSearchController {
      * @return map
      */
     @GetMapping("/getCityName")
-    public Map<String, Object> getCityName(HttpServletRequest request) throws Exception {
+    public String getCityName(HttpServletRequest request) throws Exception {
         String ip = IpUtil.getIp(request);
         logger.debug("获取ip地址：{}", ip);
         if (StringUtils.startsWith(ip, localIpPrefix)) {
             ip = "218.244.250.66";
         }
+        String callback = request.getParameter("callback");
         IpVo ipVo = ipService.getIpPosition(ip, regionDbFile);
         Map<String, Object> map = new HashMap<>(8);
         if (ipVo != null) {
@@ -105,6 +107,7 @@ public class IpSearchController {
             map.put("lat", ipVo.getLat());
             map.put("level", ipVo.getLevel());
         }
-        return map;
+        String result = JSON.toJSONString(map);
+        return callback + "(" + result + ")";
     }
 }
