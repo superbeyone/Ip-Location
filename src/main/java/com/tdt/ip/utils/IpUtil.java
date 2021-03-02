@@ -37,7 +37,7 @@ public class IpUtil {
         String ip = request.getHeader("X-Real-IP");
         //X-Original-Forwarded-For
         if (StringUtils.isNotBlank(ip)) {
-            if (StringUtils.startsWith(ip, "100.125.")) {
+            if (StringUtils.startsWith(ip, "100.125.") || StringUtils.startsWith(ip, "172.16.")) {
                 String originalStr = request.getHeader("X-Original-Forwarded-For");
                 ip = StringUtils.substringBefore(originalStr, ",");
             }
